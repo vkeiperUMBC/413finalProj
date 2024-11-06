@@ -65,7 +65,7 @@ selector_1 : selector port map (RDWR, ChipEnable, ReadEnable, WriteEnable);
 inverter_1 : inerter port map (ReadEnable, ReanEnableNOT);
 
 
-
+end structural;
 
 
 
