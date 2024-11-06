@@ -6,9 +6,9 @@ use IEEE.std_logic_1164.all;
 
 entity PLSlatch is                      
   port 
-  ( d   : in  std_logic_vector(7 downto 0);
+  ( d   : in  std_logic;
     clk : in  std_logic;
-    q   : out std_logic_vector(7 downto 0)
+    q   : out std_logic
   ); 
 end PLSlatch;                          
 
