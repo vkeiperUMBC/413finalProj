@@ -8,8 +8,8 @@ entity CacheCell is
   port 
   ( CE         : in std_logic;
     RDWR       : in std_logic;
-    wd         : in std_logic_vector(7 downto 0); -- write data
-    rd         : out std_logic_vector(7 downto 0) -- read data
+    wd         : in std_logic; -- write data
+    rd         : out std_logic -- read data
   );
 end CacheCell;
 
@@ -22,6 +22,7 @@ architecture structural of CacheCell is
     clk : in  std_logic;
     q   : out std_logic
   );
+  end component;
 
   component tx 
   port
@@ -39,7 +40,7 @@ architecture structural of CacheCell is
     rde  : out std_logic;
     wre  : out std_logic
   );
-  end component
+  end component;
 
   component inverter
   port 
