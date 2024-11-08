@@ -56,7 +56,7 @@ architecture structural of CacheCell is
 
   -- signals
   signal ReadEnable, ReadEnableNOT, WriteEnable : std_logic;
-  signal tempData : std_logic_vector(7 downto 0); 
+  signal tempData : std_logic; 
 
 begin
 
