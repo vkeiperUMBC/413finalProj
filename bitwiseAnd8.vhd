@@ -1,4 +1,4 @@
--- AND Gate
+-- 8 AND Gates
 
 library IEEE;
 use IEEE.std_logic_1164.all;
@@ -9,7 +9,7 @@ entity bitwiseAnd8 is
     b : in  std_logic;
     y : out std_logic_vector(7 downto 0)
   );   
-end and2;
+end bitwiseAnd8;
 
 architecture structural of and2 is
 
