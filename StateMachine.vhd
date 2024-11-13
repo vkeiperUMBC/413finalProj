@@ -85,6 +85,8 @@ begin
     -- CURRENT IDEA: one output function encoding the current state.
     -- That signal is sent into a controller that uses it to determine the outputs such as BUSY and ENABLE
     -- all part of State Machine hiearchy, top level breaks down into 2-3 components.
+    -- OR forget all that and just have multiple output functions, keeping it to one file(like 316 HW4)
+    -- dont know if allowed in structural, ask Dhandeep!!!
     -- Schematic and layouts gon be a nightmare, latch spam
   end process;      
 
