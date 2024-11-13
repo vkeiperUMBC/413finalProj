@@ -52,7 +52,7 @@ begin
 
 PLSLatch_1 : PLSlatch port map (wd, WE, tempData);
 tx_1       : tx port map (RE, ReadEnableNOT, tempData, rd);
-inverter_1 : inerter port map (RE, ReadEnableNOT);
+inverter_1 : inverter port map (RE, ReadEnableNOT);
 
 
 end structural;
