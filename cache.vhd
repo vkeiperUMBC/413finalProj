@@ -4,9 +4,16 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity cache is
   port 
-  ( 
-    address       : in std_logic_vector(5 downto 0); --from decoder
-    mux         : in std_logic_vector(7 downto 0); -- write data
+  (
+    --from state machine, TODO: figure out what this signal is, i think enable 
+    --from decoder
+    blkSel        : in std_logic_vector(3 downto 0);
+    groupSel      : in std_logic_vector(3 downto 0);
+    tag           : in std_logic_vector(3 downto 0);
+    --from mux
+    data          : in std_logic_vector(7 downto 0);
+
+    outEnable    : out std_logic;
     htMs         : out std_logic -- read data
   );
 end cache;

@@ -5,6 +5,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity mux is
   port 
   ( 
+    --from statemachine
     sel         : in std_logic;
     Cd            : in std_logic_vector(7 downto 0);
     Md            : in std_logic_vector(7 downto 0);
