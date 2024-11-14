@@ -1,36 +1,36 @@
 -- File: <your_filename>.vhd
 -- Description: Template for VHDL module
 
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_ARITH.ALL;
-use IEEE.STD_LOGIC_UNSIGNED.ALL;
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.STD_LOGIC_ARITH.ALL;
+USE IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 -- Entity Declaration
-entity <entity_name> is
-    Port (
-        clk      : in std_logic;           -- Clock signal
-        reset    : in std_logic;           -- Reset signal
+ENTITY < entity_name > IS
+    PORT (
+        clk : IN STD_LOGIC; -- Clock signal
+        reset : IN STD_LOGIC; -- Reset signal
         -- Add other input/output ports here
-        output   : out std_logic           -- Example output port
+        output : OUT STD_LOGIC -- Example output port
     );
-end <entity_name>;
+END < entity_name > ;
 
 -- Architecture Definition
-architecture Behavioral of <entity_name> is
+ARCHITECTURE structural OF < entity_name > IS
     -- Declare any signals, constants, or types here
 
-begin
+BEGIN
     -- Process block (if needed)
-    process(clk, reset)
-    begin
-        if reset = '1' then
+    PROCESS (clk, reset)
+    BEGIN
+        IF reset = '1' THEN
             -- Initialize/reset signal values
-        elsif rising_edge(clk) then
+        ELSIF rising_edge(clk) THEN
             -- Add logic to execute on each clock cycle
-        end if;
-    end process;
+        END IF;
+    END PROCESS;
 
     -- Concurrent statements (if any)
 
-end Behavioral;
+END structural;

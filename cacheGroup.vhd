@@ -4,6 +4,7 @@ USE IEEE.STD_LOGIC_1164.ALL;
 
 ENTITY cacheGroup IS
   PORT (
+    clk : IN STD_LOGIC; -- Clock signal
     state : IN STD_LOGIC;
     RDWR : IN STD_LOGIC;
     wd : IN STD_LOGIC_VECTOR(7 DOWNTO 0); -- write data
