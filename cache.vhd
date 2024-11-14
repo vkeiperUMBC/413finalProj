@@ -42,13 +42,9 @@ architecture structural of cache is
 begin
 
 
-    -- block 1
     block0 : cacheBlock port map (blkSel(0), state, data, groupSel, tag, data, htMs);
     block1 : cacheBlock port map (blkSel(1), state, data, groupSel, tag, data, htMs);
     block2 : cacheBlock port map (blkSel(2), state, data, groupSel, tag, data, htMs);
     block3 : cacheBlock port map (blkSel(3), state, data, groupSel, tag, data, htMs);
-    -- block 2
-    -- block 3
-    -- block 4
     
 end architecture of cache
