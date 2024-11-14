@@ -20,23 +20,23 @@ architecture structural of selector is
     );
   end component;
 
-  component inv
+  component inverter
     Port (
-      a : in  STD_LOGIC;
-      y : out STD_LOGIC
+      input : in  STD_LOGIC;
+      output : out STD_LOGIC
     );
   end component;
 
   signal rdrwNOT : STD_LOGIC;
 
-  for inv_1 : inv use entity work.inv(structural);
+  for inv_1 : inverter use entity work.inverter(structural);
 
   for andRd : and2 use entity work.and2(structural);
   for andWr : and2 use entity work.and2(structural);
 
 begin
 
-  inv_1: inv port map(rdwr, rdrwNOT);
+  inv_1: inverter port map(rdwr, rdrwNOT);
 
   andRd: and2 port map(rdwr, ce, rde);
   andWr: and2 port map(rdrwNOT, ce, wre);
