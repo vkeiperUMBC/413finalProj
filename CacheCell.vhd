@@ -35,8 +35,8 @@ architecture structural of CacheCell is
 
   component inverter
   port 
-  ( a : in  std_logic;
-    y : out std_logic
+  ( input : in  std_logic;
+    output : out std_logic
   );
   end component;
 

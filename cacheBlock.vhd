@@ -37,6 +37,15 @@ ARCHITECTURE structural OF cacheBlock IS
     );
   END COMPONENT;
 
+  component validate IS
+    PORT (
+        tagIn : IN STD_LOGIC_VECTOR(1 DOWNTO 0); -- Requested tag
+        validMem : INOUT STD_LOGIC; -- Valid bit in memory
+        tagMem : INOUT STD_LOGIC_VECTOR(1 DOWNTO 0); -- Stored tag in memory
+        htMs : OUT STD_LOGIC -- Hit/Miss output: '1' for hit, '0' for miss
+    );
+  END component;
+
 
   SIGNAL group0Sel : STD_LOGIC;
   SIGNAL group1Sel : STD_LOGIC;
@@ -46,6 +55,8 @@ ARCHITECTURE structural OF cacheBlock IS
   SIGNAL tagSig : std_logic_vector(1 downto 0);
   SIGNAL valid : std_logic := 0;
 BEGIN
+
+  validateTag : validate PORT MAP(tag, valid, tagSig,htMs);
 
   group0and : and2 PORT MAP(state, groupSelect(0), group0Sel);
   group1and : and2 PORT MAP(state, groupSelect(1), group1Sel);

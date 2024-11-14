@@ -6,7 +6,6 @@ USE IEEE.STD_LOGIC_UNSIGNED.ALL;
 -- Entity Declaration
 ENTITY validate IS
     PORT (
-        clk : IN STD_LOGIC; -- Clock signal
         tagIn : IN STD_LOGIC_VECTOR(1 DOWNTO 0); -- Requested tag
         validMem : INOUT STD_LOGIC; -- Valid bit in memory
         tagMem : INOUT STD_LOGIC_VECTOR(1 DOWNTO 0); -- Stored tag in memory
