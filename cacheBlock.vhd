@@ -1,54 +1,47 @@
-library STD;
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
+LIBRARY STD;
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
 
-entity cacheBlock is
-  port 
-  ( state         : in std_logic;
-    RDWR          : in std_logic;
-    wd            : in std_logic_vector(7 downto 0); -- write data
+ENTITY cacheBlock IS
+  PORT (
+    state : IN STD_LOGIC;
+    RDWR : IN STD_LOGIC;
+    wd : IN STD_LOGIC_VECTOR(7 DOWNTO 0); -- write data
     --from decoder
-    groupSelect   : in std_logic_vector(3 downto 0);
-    tag           : in std_logic_vector(1 downto 0);
+    groupSelect : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+    tag : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
     --from mux
-    rd            : out std_logic_vector(7 downto 0) -- read data
-    htMs          : out
+    rd : OUT STD_LOGIC_VECTOR(7 DOWNTO 0); -- read data
+    htMs : OUT STD_LOGIC
   );
-end cacheBlock;
+END cacheBlock;
 
-architecture structural of cacheBlock is
+ARCHITECTURE structural OF cacheBlock IS
 
-  component cacheGroup is
-    port 
-    ( state         : in std_logic;
-      RDWR          : in std_logic;
-      wd            : in std_logic_vector(7 downto 0); -- write data
+  COMPONENT cacheGroup IS
+    PORT (
+      state : IN STD_LOGIC;
+      RDWR : IN STD_LOGIC;
+      wd : IN STD_LOGIC_VECTOR(7 DOWNTO 0); -- write data
       --from mux
-      rd            : out std_logic_vector(7 downto 0) -- read data
+      rd : OUT STD_LOGIC_VECTOR(7 DOWNTO 0) -- read data
     );
-  end component;
+  END COMPONENT;
+  COMPONENT and2
+    PORT (
+      a : IN STD_LOGIC;
+      b : IN STD_LOGIC;
+      y : OUT STD_LOGIC
+    );
+  END COMPONENT;
 
-
-  component and2
-  port 
-  ( 
-    a : in  std_logic;
-    b : in  std_logic;
-    y : out std_logic
-  );
-  end component;
-
-
-
-  signal valid : std_logic;
-  signal tag : std_logic_vector(1 downto 0);
-  signal group0Sel : std_logic; 
-  signal group1Sel : std_logic; 
-  signal group2Sel : std_logic; 
-  signal group3Sel : std_logic; 
-  
-    
-begin
+  SIGNAL valid : STD_LOGIC;
+  SIGNAL tagSig : STD_LOGIC_VECTOR(1 DOWNTO 0);
+  SIGNAL group0Sel : STD_LOGIC;
+  SIGNAL group1Sel : STD_LOGIC;
+  SIGNAL group2Sel : STD_LOGIC;
+  SIGNAL group3Sel : STD_LOGIC;
+BEGIN
 
   --valid, turn on after first write
   --todo logic for first write from state machine
@@ -58,14 +51,14 @@ begin
   -- if valid = 1 and xnors of tags = 1 then htMs <= 0 aka hit else 1
 
   --todo if 
-  group0and : and port map (state, groupSelect(0), group0Sel);
-  group1and : and port map (state, groupSelect(1), group1Sel);
-  group2and : and port map (state, groupSelect(2), group2Sel);
-  group3and : and port map (state, groupSelect(3), group3Sel);
+  group0and : AND PORT MAP(state, groupSelect(0), group0Sel);
+  group1and : AND PORT MAP(state, groupSelect(1), group1Sel);
+  group2and : AND PORT MAP(state, groupSelect(2), group2Sel);
+  group3and : AND PORT MAP(state, groupSelect(3), group3Sel);
 
-    group0 : cacheGroup port map(group0Sel, RDWR, wd, rd);
-    group1 : cacheGroup port map(group1Sel, RDWR, wd, rd);
-    group2 : cacheGroup port map(group3Sel, RDWR, wd, rd);
-    group3 : cacheGroup port map(group3Sel, RDWR, wd, rd);
+  group0 : cacheGroup PORT MAP(group0Sel, RDWR, wd, rd);
+  group1 : cacheGroup PORT MAP(group1Sel, RDWR, wd, rd);
+  group2 : cacheGroup PORT MAP(group3Sel, RDWR, wd, rd);
+  group3 : cacheGroup PORT MAP(group3Sel, RDWR, wd, rd);
 
-end architecture of cacheBlock
+END structural;

@@ -1,50 +1,56 @@
-library STD;
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
+LIBRARY STD;
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
 
-entity cache is
-  port 
-  (
-    --from state machine, TODO: figure out what this signal is, i think enable 
-    state : in std_logic;
+ENTITY cache IS
+  PORT (
+    --from enable machine, TODO: figure out what this signal is, i think enable 
+    enable : IN STD_LOGIC; -- fed down to the cache cell and handle by selector logic
+    RDWR : IN STD_LOGIC; -- wr(0) rd(1)
     --from decoder
-    blkSel        : in std_logic_vector(3 downto 0);
-    groupSel      : in std_logic_vector(3 downto 0);
-    tag           : in std_logic_vector(1 downto 0);
+    blkSel : IN STD_LOGIC_VECTOR(3 DOWNTO 0); -- used to select which block is used
+    groupSel : IN STD_LOGIC_VECTOR(3 DOWNTO 0); -- used to select which group of 8 cache cells is used
+    tag : IN STD_LOGIC_VECTOR(1 DOWNTO 0); -- used to determine if hit or miss based on matching tag
     --from mux
-    data          : in std_logic_vector(7 downto 0);
+    data : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
 
-    dataOut : out std_logic_vector(7 downto 0);
+    dataOut : OUT STD_LOGIC_VECTOR(7 DOWNTO 0);
 
-    outEnable    : out std_logic;
-    htMs         : out std_logic -- read data
+    outEnable : OUT STD_LOGIC; -- if read hit then enable the output
+    htMs : OUT STD_LOGIC -- miss(0) or hit(1) determined in the blocks
   );
-end cache;
+end ;
 
-architecture structural of cache is
+ARCHITECTURE structural OF cache IS
 
-  component cacheBlock is
-    port 
-    ( state         : in std_logic;
-      RDWR          : in std_logic;
-      wd            : in std_logic_vector(7 downto 0); -- write data
+  COMPONENT cacheBlock IS
+    PORT (
+      enable : IN STD_LOGIC;
+      RDWR : IN STD_LOGIC;
+      wd : IN STD_LOGIC_VECTOR(7 DOWNTO 0); -- write data
       --from decoder
-      groupSelect   : in std_logic_vector(3 downto 0);
-      tag           : in std_logic_vector(1 downto 0);
+      groupSelect : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+      tag : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
       --from mux
-      rd            : out std_logic_vector(7 downto 0) -- read data
-      htMs          : out
+      rd : OUT STD_LOGIC_VECTOR(7 DOWNTO 0); -- read data
+      htMs : OUT STD_LOGIC
     );
-  end component;
-  
-  
-    
-begin
+  END COMPONENT;
 
+  COMPONENT and3
+    PORT (
+      a : IN STD_LOGIC;
+      b : IN STD_LOGIC;
+      c : IN STD_LOGIC;
+      y : OUT STD_LOGIC
+    );
+  END COMPONENT;
+BEGIN
+  block0 : cacheBlock PORT MAP(blkSel(0), RDWR, data, groupSel, tag, dataOut, htMs);
+  block1 : cacheBlock PORT MAP(blkSel(1), RDWR, data, groupSel, tag, dataOut, htMs);
+  block2 : cacheBlock PORT MAP(blkSel(2), RDWR, data, groupSel, tag, dataOut, htMs);
+  block3 : cacheBlock PORT MAP(blkSel(3), RDWR, data, groupSel, tag, dataOut, htMs);
 
-    block0 : cacheBlock port map (blkSel(0), state, data, groupSel, tag, data, htMs);
-    block1 : cacheBlock port map (blkSel(1), state, data, groupSel, tag, data, htMs);
-    block2 : cacheBlock port map (blkSel(2), state, data, groupSel, tag, data, htMs);
-    block3 : cacheBlock port map (blkSel(3), state, data, groupSel, tag, data, htMs);
-    
-end architecture of cache
+  --logic for output enable, enable out if there is a read hit and cache is on
+  outEnAnd : and3 PORT MAP(htMs, enable, RDWR, outEnable);
+END structural;

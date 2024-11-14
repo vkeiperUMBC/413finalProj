@@ -1,52 +1,46 @@
-library STD;
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
+LIBRARY STD;
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
 
-entity cacheGroup is
-  port 
-  ( state         : in std_logic;
-    RDWR          : in std_logic;
-    wd            : in std_logic_vector(7 downto 0); -- write data
+ENTITY cacheGroup IS
+  PORT (
+    state : IN STD_LOGIC;
+    RDWR : IN STD_LOGIC;
+    wd : IN STD_LOGIC_VECTOR(7 DOWNTO 0); -- write data
     --from mux
-    rd            : out std_logic_vector(7 downto 0) -- read data
+    rd : OUT STD_LOGIC_VECTOR(7 DOWNTO 0) -- read data
   );
-end cacheGroup;
+END cacheGroup;
 
-architecture structural of cacheGroup is
+ARCHITECTURE structural OF cacheGroup IS
 
-    component CacheCell is
-    port( 
-            WE : in std_logic; -- write enable
-            RE : in std_logic; -- read enable
-            wd : in std_logic; -- write data
-            rd : out std_logic -- read data
-        );
-    end component;
+  COMPONENT CacheCell IS
+    PORT (
+      WE : IN STD_LOGIC; -- write enable
+      RE : IN STD_LOGIC; -- read enable
+      wd : IN STD_LOGIC; -- write data
+      rd : OUT STD_LOGIC -- read data
+    );
+  END COMPONENT;
+  COMPONENT selector IS
+    PORT (
+      rdwr : IN STD_LOGIC;
+      ce : IN STD_LOGIC;
+      rde : OUT STD_LOGIC;
+      wre : OUT STD_LOGIC);
+  END COMPONENT;
 
+  SIGNAL rdEnSig : STD_LOGIC;
+  SIGNAL wrEnSig : STD_LOGIC;
+BEGIN
 
-    component selector is 
-    port(
-        rdwr : in  std_logic;
-        ce   : in  std_logic;
-        rde  : out std_logic;
-        wre  : out std_logic);
-    end component;
-
-    signal rdEnSig : std_logic;
-    signal wrEnSig : std_logic;
-
-    
-begin
-
-    selector : selector port map(rdwr, state, rdEnSig, wrEnSig);
-    cell0 : CacheCell port map(wrEnSig, rdEnSig, wd(0), rd(0));
-    cell1 : CacheCell port map(wrEnSig, rdEnSig, wd(1), rd(1));
-    cell2 : CacheCell port map(wrEnSig, rdEnSig, wd(2), rd(2));
-    cell3 : CacheCell port map(wrEnSig, rdEnSig, wd(3), rd(3));
-    cell4 : CacheCell port map(wrEnSig, rdEnSig, wd(4), rd(4));
-    cell5 : CacheCell port map(wrEnSig, rdEnSig, wd(5), rd(5));
-    cell6 : CacheCell port map(wrEnSig, rdEnSig, wd(6), rd(6));
-    cell7 : CacheCell port map(wrEnSig, rdEnSig, wd(7), rd(7));
-  
-
-end structural;
+  cellSelect : selector PORT MAP(rdwr, state, rdEnSig, wrEnSig);
+  cell0 : CacheCell PORT MAP(wrEnSig, rdEnSig, wd(0), rd(0));
+  cell1 : CacheCell PORT MAP(wrEnSig, rdEnSig, wd(1), rd(1));
+  cell2 : CacheCell PORT MAP(wrEnSig, rdEnSig, wd(2), rd(2));
+  cell3 : CacheCell PORT MAP(wrEnSig, rdEnSig, wd(3), rd(3));
+  cell4 : CacheCell PORT MAP(wrEnSig, rdEnSig, wd(4), rd(4));
+  cell5 : CacheCell PORT MAP(wrEnSig, rdEnSig, wd(5), rd(5));
+  cell6 : CacheCell PORT MAP(wrEnSig, rdEnSig, wd(6), rd(6));
+  cell7 : CacheCell PORT MAP(wrEnSig, rdEnSig, wd(7), rd(7));
+END structural;
