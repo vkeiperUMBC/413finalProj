@@ -10,6 +10,7 @@ use IEEE.std_logic_1164.all;
 
 entity dff is                      
   port ( d   : in  std_logic;
+         e   : in  std_logic;
          clk : in  std_logic;
          q   : out std_logic;
          qbar: out std_logic); 
