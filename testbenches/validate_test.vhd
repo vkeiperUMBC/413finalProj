@@ -1,111 +1,82 @@
--- Entity: validate_tb 
--- Architecture : test 
--- Author: cpatel2
--- Created On: 11/13/24
---
-library IEEE;
-use IEEE.std_logic_1164.all;
-use IEEE.std_logic_textio.all;
-use IEEE.std_logic_arith.all;
-use STD.textio.all;
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.STD_LOGIC_ARITH.ALL;
+USE IEEE.STD_LOGIC_UNSIGNED.ALL;
 
-entity validate_tb is
-end validate_tb;
+ENTITY validate_tb IS
+END validate_tb;
 
-architecture test of validate_tb is
+ARCHITECTURE behavior OF validate_tb IS
 
-  -- Component Declaration for validate
-  component validate
-      port (
-          clk : in std_logic;
-          tagIn : in std_logic_vector(1 downto 0);
-          validMem : inout std_logic;
-          tagMem : inout std_logic_vector(1 downto 0);
-          htMs : out std_logic
-      );
-  end component;
+    -- Component Declaration for the Unit Under Test (UUT)
+    COMPONENT validate
+        PORT (
+            tagIn : IN STD_LOGIC_VECTOR(1 DOWNTO 0); -- Requested tag
+            validMem : IN STD_LOGIC; -- Valid bit in memory
+            tagMem : IN STD_LOGIC_VECTOR(1 DOWNTO 0); -- Stored tag in memory
+            validOut : OUT STD_LOGIC; -- Valid bit in memory (output)
+            tagOut : OUT STD_LOGIC_VECTOR(1 DOWNTO 0); -- Stored tag in memory (output)
+            htMs : OUT STD_LOGIC -- Hit/Miss output: '1' for hit, '0' for miss
+        );
+    END COMPONENT;
 
-  for dut: validate use entity work.validate(structural);
+    -- Signals to drive the UUT
+    SIGNAL tagIn : STD_LOGIC_VECTOR(1 DOWNTO 0) := "00"; -- Requested tag
+    SIGNAL validMem : STD_LOGIC := '0'; -- Valid bit in memory
+    SIGNAL tagMem : STD_LOGIC_VECTOR(1 DOWNTO 0) := "00"; -- Stored tag in memory
+    SIGNAL validOut : STD_LOGIC; -- Valid bit in memory (output)
+    SIGNAL tagOut : STD_LOGIC_VECTOR(1 DOWNTO 0); -- Stored tag in memory (output)
+    SIGNAL htMs : STD_LOGIC; -- Hit/Miss output
 
-  -- Signal Declarations
-  signal clk : std_logic := '0';
-  signal tagIn : std_logic_vector(1 downto 0);
-  signal validMem : std_logic;
-  signal tagMem : std_logic_vector(1 downto 0);
-  signal htMs : std_logic;
-  
-  signal clk_count : integer := 0;
+BEGIN
 
-  -- Input and Output Files
-  file input_file  : text is in "./validate_input.txt";
-  file output_file : text is out "./validate_output.txt";
+    -- Instantiate the Unit Under Test (UUT)
+    uut: validate PORT MAP (
+        tagIn => tagIn,
+        validMem => validMem,
+        tagMem => tagMem,
+        validOut => validOut,
+        tagOut => tagOut,
+        htMs => htMs
+    );
 
-  -- Procedure for Printing Output to File
-  procedure print_output is
-    variable out_line : line;
-  begin
-    write(out_line, string'(" Clock: "));
-    write(out_line, clk_count);
-    write(out_line, string'(" tagIn: "));
-    write(out_line, tagIn);
-    write(out_line, string'(" validMem: "));
-    write(out_line, validMem);
-    write(out_line, string'(" tagMem: "));
-    write(out_line, tagMem);
-    write(out_line, string'(" htMs: "));
-    write(out_line, htMs);
-    writeline(output_file, out_line);
-  end print_output;
+    -- Stimulus process to drive the signals
+    stim_proc: PROCESS
+    BEGIN
+        -- no match and 0 valid 
+        tagIn <= "10"; -- Write tag "10"
+        validMem <= '0'; -- Initially, validMem is '0'
+        tagMem <= "00"; -- Initially, tagMem is "00"
+        WAIT FOR 10 ns; -- Wait for 10 ns
+        
+        -- do match and 0 valid 
+        tagMem <= "01"; -- Update tagMem to "01"
+        validMem <= '0'; -- Set validMem to '1' after the first write
+        tagIn <= "01"; -- Write tag "01"
+        WAIT FOR 10 ns; -- Wait for 10 ns
 
-begin
+        -- valid 1 do match
+        tagMem <= "01"; -- Update tagMem to "01"
+        validMem <= '1'; -- Set validMem to '1' after the first write
+        tagIn <= "01"; -- Write tag "01"
+        WAIT FOR 10 ns; -- Wait for 10 ns
 
-  -- Instantiate the DUT (Device Under Test)
-  dut : validate port map (
-      tagIn => tagIn,
-      validMem => validMem,
-      tagMem => tagMem,
-      htMs => htMs
-  );
+        -- valid 1 dont match
+        tagMem <= "11"; -- Update tagMem to "01"
+        validMem <= '1'; -- Set validMem to '1' after the first write
+        tagIn <= "00"; -- Write tag "01"
+        WAIT FOR 10 ns; -- Wait for 10 ns
 
-  -- Clock Process
-  clk_process : process
-  begin
-    clk <= '1', '0' after 5 ns;
-    wait for 10 ns;
-  end process clk_process;
+        -- Check Hit/Miss behavior by setting tagMem to match or mismatch tagIn
+        tagIn <= "10"; -- Set tagIn to "00" for hit
+        tagMem <= "10"; -- Set tagMem to "00" for a hit
+        validMem <= '1'; -- validMem is '1'
+        WAIT FOR 10 ns; -- Wait for 10 ns
+        
+        WAIT FOR 10 ns; -- Wait for 10 ns
 
-  -- I/O Process for Reading and Writing to Files
-  io_process : process
-    variable buf : line;
-    variable tagIn_var : std_logic_vector(1 downto 0);
-    variable tagMem_var : std_logic_vector(1 downto 0);
-    variable validMem_var : std_logic;
-  begin
-    while not endfile(input_file) loop
-      -- Read inputs from the file
-      readline(input_file, buf);
-      read(buf, validMem_var);
-      validMem <= validMem_var;
+        -- End simulation
+        WAIT;
+    END PROCESS;
 
-      readline(input_file, buf);
-      read(buf, tagMem_var);
-      tagMem <= tagMem_var;
-
-      readline(input_file, buf);
-      read(buf, tagIn_var);
-      tagIn <= tagIn_var;
-
-      wait for 20 ns;  -- Wait for outputs to stabilize
-
-      -- Increment the clock count
-      clk_count <= clk_count + 1;
-
-      -- Print current state to output file
-      print_output;
-    end loop;
-    
-    -- Close the file once finished
-    wait;
-  end process io_process;
-
-end test;
+END behavior;
