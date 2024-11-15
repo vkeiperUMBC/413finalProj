@@ -21,12 +21,12 @@ ARCHITECTURE behavior OF validate_tb IS
     END COMPONENT;
 
     -- Signals to drive the UUT
-    SIGNAL tagIn : STD_LOGIC_VECTOR(1 DOWNTO 0) := "00"; -- Requested tag
+    SIGNAL tagIn : STD_LOGIC_VECTOR(1 DOWNTO 0) := (others => '0'); -- Requested tag
     SIGNAL validMem : STD_LOGIC := '0'; -- Valid bit in memory
-    SIGNAL tagMem : STD_LOGIC_VECTOR(1 DOWNTO 0) := "00"; -- Stored tag in memory
+    SIGNAL tagMem : STD_LOGIC_VECTOR(1 DOWNTO 0) := (others => '0'); -- Stored tag in memory
     SIGNAL validOut : STD_LOGIC; -- Valid bit in memory (output)
-    SIGNAL tagOut : STD_LOGIC_VECTOR(1 DOWNTO 0); -- Stored tag in memory (output)
-    SIGNAL htMs : STD_LOGIC; -- Hit/Miss output
+    SIGNAL tagOut : STD_LOGIC_VECTOR(1 DOWNTO 0) := (others => '0'); -- Stored tag in memory (output)
+    SIGNAL htMs : STD_LOGIC := '0'; -- Hit/Miss output
 
 BEGIN
 

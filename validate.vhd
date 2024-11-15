@@ -61,13 +61,11 @@ ARCHITECTURE structural OF validate IS
 
     -- Signals for internal wiring
     SIGNAL validInvSig : STD_LOGIC := '1';
-    SIGNAL wireFirst : STD_LOGIC;
-    SIGNAL tagsMatch : STD_LOGIC;
-    SIGNAL firstWriteDone : STD_LOGIC := '0';  -- Flag to check if first write is done
-    SIGNAL vofSig : std_logic;
-    SIGNAL tagM: std_logic_vector(1 downto 0);
-    SIGNAL htMsInt : std_logic;
-    SIGNAL htMsInt2 : std_logic;
+    SIGNAL wireFirst : STD_LOGIC := '0';
+    SIGNAL vofSig : std_logic := '0';
+    SIGNAL tagM: std_logic_vector(1 downto 0) := "00";
+    SIGNAL htMsInt : std_logic := '0';
+    SIGNAL htMsInt2 : std_logic := '0';
 
 BEGIN
     -- First Write Logic (Set validOut to 1 after the first write)
