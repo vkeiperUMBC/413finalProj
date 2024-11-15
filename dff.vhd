@@ -23,9 +23,11 @@ begin
   output: process                 
 
   begin                           
-    wait until ( clk'EVENT and clk = '0' ); 
+    wait until ( clk'EVENT and clk = '0' );
+    if e <= '1' then
     q <= d;
     qbar <= not d ;
+    end if;
   end process output;        
 
                              
