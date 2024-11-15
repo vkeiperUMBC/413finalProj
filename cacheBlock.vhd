@@ -38,6 +38,7 @@ ARCHITECTURE structural OF cacheBlock IS
     PORT (
         clk: in std_logic;
         enable : in std_logic;
+        RDWR : in std_logic;
         tagIn : IN STD_LOGIC_VECTOR(1 DOWNTO 0); -- Requested tag
         htMs : OUT STD_LOGIC -- Hit/Miss output: '0' for hit, '1' for miss
     );
@@ -63,7 +64,7 @@ ARCHITECTURE structural OF cacheBlock IS
 BEGIN
 
   -- Validate the tag
-  validateTag : validate PORT MAP(clk, enable, tag, htMsInt);
+  validateTag : validate PORT MAP(clk, enable, RDWR, tag, htMsInt);
   
   continue : and2 PORT MAP(htMsInt, state, cont);
   -- Connect the state of the cache groups to the select lines

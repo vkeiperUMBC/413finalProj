@@ -75,7 +75,7 @@ BEGIN
     WAIT FOR 20 ns;
 
     enable <= '1';
-    RDWR <= '1';  -- Read operation
+    RDWR <= '0';  -- Read operation
     state <= '1';  -- Set state to active
     groupSelect <= "0001";  -- Select group 1
     tag <= "01";  -- Default tag
