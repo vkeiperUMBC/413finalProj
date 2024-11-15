@@ -63,6 +63,13 @@ ARCHITECTURE structural OF validate IS
       q   : OUT STD_LOGIC
     ); 
   END COMPONENT;
+  
+  COMPONENT dff 
+    port (d   : in  std_logic;
+         clk : in  std_logic;
+         q   : out std_logic;
+         qbar: out std_logic); 
+    end component;
 
     -- Internal signals to store validMem and tagMem
     SIGNAL validMem : STD_LOGIC := '0';  -- Internal signal for valid bit
@@ -87,8 +94,8 @@ ARCHITECTURE structural OF validate IS
 BEGIN
 
     --update tage on first write
-    tag0ltch : PLSlatch port map (tagIn(0), validInv, tagMem(0));
-    tag1ltch : PLSlatch port map (tagIn(1), validInv, tagMem(1));
+    tag0ltch : dff port map (tagIn(0), validInv, tagMem(0), open);
+    tag1ltch : dff port map (tagIn(1), validInv, tagMem(1), open);
 
     --change valid to high on first write
     invWr: inverter port map(RDWR, notWR);

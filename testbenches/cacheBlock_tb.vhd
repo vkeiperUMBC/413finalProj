@@ -75,13 +75,6 @@ BEGIN
     WAIT FOR 20 ns;
 
     enable <= '1';
-    RDWR <= '0';  -- Read operation
-    state <= '1';  -- Set state to active
-    groupSelect <= "0001";  -- Select group 1
-    tag <= "01";  -- Default tag
-    WAIT FOR 20 ns;
-
-    enable <= '1';
     RDWR <= '0';  -- write operation
     state <= '1';  -- Set state to active
     groupSelect <= "0001";  -- Select group 1
@@ -89,25 +82,17 @@ BEGIN
     WAIT FOR 20 ns;
 
     enable <= '1';
-    RDWR <= '1';  -- Read operation
-    state <= '1';  -- Set state to active
-    groupSelect <= "0001";  -- Select group 1
-    tag <= "01";  -- Default tag
-    WAIT FOR 20 ns;
-    
-    --attempt for incorrect write
-    enable <= '1';
-    RDWR <= '0';  -- write operation
+    RDWR <= '1';  -- write operation
     state <= '1';  -- Set state to active
     groupSelect <= "0001";  -- Select group 1
     tag <= "11";  -- Default tag
     WAIT FOR 20 ns;
 
     enable <= '1';
-    RDWR <= '1';  -- Read operation
+    RDWR <= '1';  -- write operation
     state <= '1';  -- Set state to active
     groupSelect <= "0001";  -- Select group 1
-    tag <= "11";  -- Default tag
+    tag <= "01";  -- Default tag
     WAIT FOR 20 ns;
 
     -- Finish Simulation
