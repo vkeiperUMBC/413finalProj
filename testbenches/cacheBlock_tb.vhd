@@ -1,35 +1,40 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.STD_LOGIC_ARITH.ALL;
+USE IEEE.STD_LOGIC_UNSIGNED.ALL;
 
+-- Testbench Entity Declaration
 ENTITY cacheBlock_tb IS
--- No ports in a testbench entity
 END cacheBlock_tb;
 
-ARCHITECTURE TEST OF cacheBlock_tb IS
+-- Testbench Architecture
+ARCHITECTURE behavior OF cacheBlock_tb IS
 
   -- Component Declaration for the Unit Under Test (UUT)
   COMPONENT cacheBlock
-    PORT(
+    PORT (
+      enable: IN STD_LOGIC;
       clk : IN STD_LOGIC;
-      state : IN STD_LOGIC;
-      RDWR : IN STD_LOGIC;
-      wd : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
-      groupSelect : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-      tag : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
-      rd : OUT STD_LOGIC_VECTOR(7 DOWNTO 0);
-      htMs : OUT STD_LOGIC
+      state : IN STD_LOGIC;  -- State (active/inactive)
+      RDWR : IN STD_LOGIC;  -- Read/Write control
+      wd : IN STD_LOGIC_VECTOR(7 DOWNTO 0);  -- Write data
+      groupSelect : IN STD_LOGIC_VECTOR(3 DOWNTO 0);  -- Cache group selection
+      tag : IN STD_LOGIC_VECTOR(1 DOWNTO 0);  -- Requested tag
+      rd : OUT STD_LOGIC_VECTOR(7 DOWNTO 0);  -- Read data
+      htMs : OUT STD_LOGIC  -- Hit/Miss output
     );
   END COMPONENT;
 
-  -- Testbench Signals
+  -- Signals for UUT
+  SIGNAL enable : STD_LOGIC := '0';
   SIGNAL clk : STD_LOGIC := '0';
-  SIGNAL state : STD_LOGIC := '0';
-  SIGNAL RDWR : STD_LOGIC := '0'; -- '1' for write, '0' for read
-  SIGNAL wd : STD_LOGIC_VECTOR(7 DOWNTO 0) := (others => '0');
-  SIGNAL groupSelect : STD_LOGIC_VECTOR(3 DOWNTO 0) := (others => '0');
-  SIGNAL tag : STD_LOGIC_VECTOR(1 DOWNTO 0) := (others => '0');
-  SIGNAL rd : STD_LOGIC_VECTOR(7 DOWNTO 0);
-  SIGNAL htMs : STD_LOGIC := '0';
+  SIGNAL state : STD_LOGIC := '0';  -- Initially inactive
+  SIGNAL RDWR : STD_LOGIC := '0';  -- Read operation
+  SIGNAL wd : STD_LOGIC_VECTOR(7 DOWNTO 0) := "00000000";  -- Write data
+  SIGNAL groupSelect : STD_LOGIC_VECTOR(3 DOWNTO 0) := "0000";  -- Select group 0
+  SIGNAL tag : STD_LOGIC_VECTOR(1 DOWNTO 0) := "00";  -- Default tag
+  SIGNAL rd : STD_LOGIC_VECTOR(7 DOWNTO 0);  -- Read data output
+  SIGNAL htMs : STD_LOGIC;  -- Hit/Miss output
 
   -- Clock period
   CONSTANT clk_period : TIME := 10 ns;
@@ -38,6 +43,7 @@ BEGIN
 
   -- Instantiate the Unit Under Test (UUT)
   uut: cacheBlock PORT MAP (
+    enable => enable,
     clk => clk,
     state => state,
     RDWR => RDWR,
@@ -48,70 +54,64 @@ BEGIN
     htMs => htMs
   );
 
-  -- Clock process definition
+  -- Clock Generation Process
   clk_process : PROCESS
   BEGIN
-    clk <= '0';
-    WAIT FOR clk_period/2;
-    clk <= '1';
-    WAIT FOR clk_period/2;
+    -- Toggle clock every clk_period
+    WAIT FOR clk_period / 2;
+    clk <= NOT clk;
   END PROCESS;
 
-  -- Stimulus process
-  stim_proc: PROCESS
+  -- Stimulus Process
+  stimulus_process : PROCESS
   BEGIN
-    -- Initialize Inputs
-    state <= '0';  -- Enable cache block
-    WAIT FOR clk_period;
+    -- Test Case 1: Read operation with initial state and tag (miss expected)
+    enable <= '0';
+    RDWR <= '0';  -- write operation
+    state <= '0';  -- Set state to active
+    groupSelect <= "0001";  -- Select group 1
+    wd <= "00110011";
+    tag <= "01";  -- Default tag
+    WAIT FOR 20 ns;
 
-    state <= '1';  -- Enable cache block
-    RDWR <= '1';
-    WAIT FOR clk_period;
+    enable <= '1';
+    RDWR <= '1';  -- Read operation
+    state <= '1';  -- Set state to active
+    groupSelect <= "0001";  -- Select group 1
+    tag <= "01";  -- Default tag
+    WAIT FOR 20 ns;
 
-    -- Write operation: Write "10101010" to group 1, tag "01"
-    RDWR <= '0';               -- Write operation
-    wd <= "10101010";          -- Write data
-    groupSelect <= "0001";     -- Select group 1
-    tag <= "01";               -- Tag for write
-    WAIT FOR clk_period;
+    enable <= '1';
+    RDWR <= '0';  -- write operation
+    state <= '1';  -- Set state to active
+    groupSelect <= "0001";  -- Select group 1
+    tag <= "01";  -- Default tag
+    WAIT FOR 20 ns;
 
-    -- Check the result of the write by reading back
-    RDWR <= '1';               -- Read operation
+    enable <= '1';
+    RDWR <= '1';  -- Read operation
+    state <= '1';  -- Set state to active
+    groupSelect <= "0001";  -- Select group 1
+    tag <= "01";  -- Default tag
+    WAIT FOR 20 ns;
+    
+    --attempt for incorrect write
+    enable <= '1';
+    RDWR <= '0';  -- write operation
+    state <= '1';  -- Set state to active
+    groupSelect <= "0001";  -- Select group 1
+    tag <= "11";  -- Default tag
+    WAIT FOR 20 ns;
 
-    WAIT FOR clk_period;
+    enable <= '1';
+    RDWR <= '1';  -- Read operation
+    state <= '1';  -- Set state to active
+    groupSelect <= "0001";  -- Select group 1
+    tag <= "11";  -- Default tag
+    WAIT FOR 20 ns;
 
-    -- Write operation: Write "10101010" to group 1, tag "01"
-    RDWR <= '0';               -- Write operation
-    wd <= "11100010";          -- Write data
-    groupSelect <= "0001";     -- Select group 1
-    tag <= "10";               -- Tag for write
-    WAIT FOR clk_period;
-
-    -- Check the result of the write by reading back
-    RDWR <= '1';               -- Read operation
-    WAIT FOR clk_period;
-
-
---    -- Test miss: Attempt to access an uninitialized group/tag
---    groupSelect <= "0010";     -- Select group 2
---    tag <= "10";               -- Different tag for miss
---    WAIT FOR clk_period;
-
-
---    -- Test hit on different data
---    RDWR <= '1';
---    wd <= "11110000";          -- New write data
---    groupSelect <= "0001";     -- Select group 1
---    tag <= "01";               -- Same tag for hit
---    WAIT FOR clk_period;
-
---    -- Read back to verify the new data
---    RDWR <= '0';
-    WAIT FOR clk_period;
-
-
-    -- Test end
+    -- Finish Simulation
     WAIT;
   END PROCESS;
 
-END TEST;
+END behavior;

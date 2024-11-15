@@ -5,7 +5,8 @@ ENTITY cacheBlock IS
   PORT (
     clk : in STD_LOGIC;
     state : IN STD_LOGIC; -- State (e.g., active/inactive)
-    RDWR : IN STD_LOGIC; -- Read/Write control
+    enable : IN STD_LOGIC; -- State (e.g., active/inactive)
+    RDWR : IN STD_LOGIC; -- Read/Write control read is high write is low
     wd : IN STD_LOGIC_VECTOR(7 DOWNTO 0); -- Write data
     groupSelect : IN STD_LOGIC_VECTOR(3 DOWNTO 0); -- Group select for cache group selection
     tag : IN STD_LOGIC_VECTOR(1 DOWNTO 0); -- Requested tag
@@ -35,11 +36,9 @@ ARCHITECTURE structural OF cacheBlock IS
 
   COMPONENT validate IS
     PORT (
+        clk: in std_logic;
+        enable : in std_logic;
         tagIn : IN STD_LOGIC_VECTOR(1 DOWNTO 0); -- Requested tag
-        validMem : IN STD_LOGIC; -- Valid bit in memory
-        tagMem : IN STD_LOGIC_VECTOR(1 DOWNTO 0); -- Stored tag in memory
-        validOut : OUT STD_LOGIC; -- Valid bit in memory (output)
-        tagOut : OUT STD_LOGIC_VECTOR(1 DOWNTO 0); -- Tag output to update
         htMs : OUT STD_LOGIC -- Hit/Miss output: '0' for hit, '1' for miss
     );
   END COMPONENT;
@@ -64,7 +63,7 @@ ARCHITECTURE structural OF cacheBlock IS
 BEGIN
 
   -- Validate the tag
-  validateTag : validate PORT MAP(tag, valid, tagSig, validOut, tagOut, htMsInt);
+  validateTag : validate PORT MAP(clk, enable, tag, htMsInt);
   
   continue : and2 PORT MAP(htMsInt, state, cont);
   -- Connect the state of the cache groups to the select lines
