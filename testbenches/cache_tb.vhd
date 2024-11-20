@@ -67,10 +67,17 @@ BEGIN
   BEGIN
   
     --reset to clear
-    rst <= '1';
-    wait for 10 ns;
+    enable <= '1';
+    blkSel <= "1111";
+    groupSel <= "1111";
+    rst <= '1';    
+    
+    wait for 20 ns;
+    enable <= '0';
+    blkSel <= "0000";
+    groupSel <= "0000";
     rst <= '0';
-    wait for 10 ns;
+    wait for 20 ns;
 
     -- Test Case 1: Write operation to block 0, group 0 with tag "01" expect hit
     enable <= '1';
@@ -79,7 +86,7 @@ BEGIN
     groupSel <= "0001";  -- Select group 0
     tag <= "01";  -- Tag
     data <= "11001100";  -- Data to write
-    WAIT FOR 20 ns;
+    WAIT FOR 40 ns;
 
     -- Test Case 2: Read operation from block 0, group 0 with tag "01" (expect hit)
     RDWR <= '1';  -- Read operation
@@ -95,13 +102,28 @@ BEGIN
     RDWR <= '1';  -- Read operation
     WAIT FOR 20 ns;
     
-      -- Test Case 1: Write operation to block 0, group 0 with wrong tagtag "10" (expect miss)
-    enable <= '1';
+    -- Test Case 1: Write operation to block 0, group 0 with tag "01" expect hit
     RDWR <= '0';  -- Write operation
+    blkSel <= "0100";  -- Select block 0
+    groupSel <= "0010";  -- Select group 0
+    tag <= "10";  -- Tag
+    data <= "11001100";  -- Data to write
+    WAIT FOR 40 ns;
+
+    -- Test Case 2: Read operation from block 0, group 0 with tag "01" (expect hit)
+    RDWR <= '1';  -- Read operation
+    WAIT FOR 40 ns;
+
+    -- write and read hit to all blocks working
+
+
+      -- Test Case 1: Write operation to block 0, group 0 with wrong tagtag "10" (expect miss)
+    RDWR <= '0';  -- Write operation
+    blkSel <= "0001";  -- Select block 0
+    groupSel <= "0001";  -- Select group 0
     tag <= "11";  -- Tag
-    data <= "10011100";  -- Data to write
-    WAIT FOR 5 ns;
-    WAIT FOR 15 ns;
+    data <= "11000000";  -- Data to write
+    WAIT FOR 40 ns;
 
     -- Test Case 2: Read operation from block 0, group 0 with tag "01" (expect hit)
     RDWR <= '1';  -- Read operation

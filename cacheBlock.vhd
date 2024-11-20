@@ -66,14 +66,22 @@ ARCHITECTURE structural OF cacheBlock IS
     port (d   : in  std_logic;
          clk : in  std_logic;
          rst : in  std_logic;
-         q   : out std_logic;
-         qbar: out std_logic); 
+         q   : out std_logic);
     end component;
+
+
+  component inverter
+  port 
+  ( input : in  std_logic;
+    output : out std_logic
+  );
+  end component;
 
 
   -- Internal signals to connect the validate component
   SIGNAL group0Sel, group1Sel, group2Sel, group3Sel : STD_LOGIC;
   SIGNAL htMsInt : STD_LOGIC; -- Internal signal to hold the htMs value
+  SIGNAL clkInv : STD_LOGIC; -- Internal signal to hold the htMs value
 
 BEGIN
 
@@ -92,13 +100,12 @@ BEGIN
   group2 : cacheGroup PORT MAP(group2Sel, RDWR, wd, rd);
   group3 : cacheGroup PORT MAP(group3Sel, RDWR, wd, rd);
   
+--  clkInverter: inverter port map(clk, clkInv);
   
-
- htMs <= htMsInt;
+  htMs <= htMsInt;
   
+--  htMsOut : dffwr port map (htmsint, clkInv, rst, htms);
+   
   
-
-  -- Update the hit/miss result (htMs) on each clock cycle
---  htMsUpdt : dff PORT MAP (htMsInt, clk, htMs, open);
 
 END structural;

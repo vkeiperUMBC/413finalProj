@@ -48,6 +48,24 @@ ARCHITECTURE structural OF cache IS
     );
   END COMPONENT;
 
+  COMPONENT inverter
+    PORT (
+      input : IN STD_LOGIC;
+      output : OUT STD_LOGIC
+    );
+  END COMPONENT;
+
+
+
+  COMPONENT dffwr
+    port (d   : in  std_logic;
+         clk : in  std_logic;
+         rst : in  std_logic;
+         q   : out std_logic); 
+    end component;
+
+
+
   COMPONENT and2
     PORT (
       a : IN STD_LOGIC;
@@ -75,23 +93,25 @@ end component;
 
 signal dataInt : std_logic_vector (7 downto 0);
 signal htMsInt : std_logic;
-signal blockInt : std_logic_vector (3 downto 0);
+signal clkInv : std_logic;
+signal blockClkInt : std_logic_vector (3 downto 0);
 
 BEGIN
 
-  block0sel: and2 port map(clk, blkSel(0), blockInt(0));
-  block1sel: and2 port map(clk, blkSel(1), blockInt(1));
-  block2sel: and2 port map(clk, blkSel(2), blockInt(2));
-  block3sel: and2 port map(clk, blkSel(3), blockInt(3));
+  blk0ClkEnable: and2 port map(clk, blkSel(0), blockClkInt(0));
+  blk1ClkEnable: and2 port map(clk, blkSel(1), blockClkInt(1));
+  blk2ClkEnable: and2 port map(clk, blkSel(2), blockClkInt(2));
+  blk3ClkEnable: and2 port map(clk, blkSel(3), blockClkInt(3));
 
 
-  block0 : cacheBlock PORT MAP(blockInt(0), blkSel(0), enable, RDWR, data, groupSel, tag, rst, dataInt, htMsInt);
-  block1 : cacheBlock PORT MAP(blockInt(1), blkSel(1), enable, RDWR, data, groupSel, tag, rst, dataInt, htMsInt);
-  block2 : cacheBlock PORT MAP(blockInt(2), blkSel(2), enable, RDWR, data, groupSel, tag, rst, dataInt, htMsInt);
-  block3 : cacheBlock PORT MAP(blockInt(3), blkSel(3), enable, RDWR, data, groupSel, tag, rst, dataInt, htMsInt);
+  block0 : cacheBlock PORT MAP(blockClkInt(0), blkSel(0), enable, RDWR, data, groupSel, tag, rst, dataInt, htMsInt);
+  block1 : cacheBlock PORT MAP(blockClkInt(1), blkSel(1), enable, RDWR, data, groupSel, tag, rst, dataInt, htMsInt);
+  block2 : cacheBlock PORT MAP(blockClkInt(2), blkSel(2), enable, RDWR, data, groupSel, tag, rst, dataInt, htMsInt);
+  block3 : cacheBlock PORT MAP(blockClkInt(3), blkSel(3), enable, RDWR, data, groupSel, tag, rst, dataInt, htMsInt);
   
-  htMs <= htMsInt;
-
+  clkInverter : inverter port map(clk, clkInv);
+  htMsFF : dffwr port map (htMsInt, clkInv, rst, htMs);
+  
   outputEn : bitwiseAnd8 port map(dataInt, htMsInt, dataOut);
 
 END structural;

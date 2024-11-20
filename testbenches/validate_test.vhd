@@ -13,17 +13,21 @@ ARCHITECTURE behavior OF validate_test IS
   -- Component Declaration for the Unit Under Test (UUT)
   COMPONENT validate
     PORT (
-      clk : IN STD_LOGIC;
-      enable : IN STD_LOGIC;
-      tagIn : IN STD_LOGIC_VECTOR(1 DOWNTO 0);  -- Requested tag
-      htMs : OUT STD_LOGIC                       -- Hit/Miss output: '1' for hit, '0' for miss
+        clk : in std_logic;
+        enable : in std_logic;
+        RDWR : in std_logic;
+        tagIn : IN STD_LOGIC_VECTOR(1 DOWNTO 0);  -- Requested tag
+        rst : in std_logic;
+        htMs : OUT STD_LOGIC                       -- Hit/Miss output: '1' for hit, '0' for miss
     );
   END COMPONENT;
 
   -- Signals for UUT
   SIGNAL clk : STD_LOGIC := '0';
+  signal RDWR : std_logic := '0';
   SIGNAL enable : STD_LOGIC := '0';
   SIGNAL tagIn : STD_LOGIC_VECTOR(1 DOWNTO 0) := "00";  -- Default tagIn
+  signal rst : std_logic := '0';
   SIGNAL htMs : STD_LOGIC;  -- Hit/Miss output signal
 
   -- Clock Period
@@ -35,7 +39,9 @@ BEGIN
   uut: validate PORT MAP (
     clk => clk,
     enable => enable,
+    RDWR => RDWR,
     tagIn => tagIn,
+    rst => rst,
     htMs => htMs
   );
 
@@ -50,33 +56,53 @@ BEGIN
   -- Stimulus Process
   stimulus_process : PROCESS
   BEGIN
-    -- Test Case 1: Initialize signals, validMem is '0' (first write)
-    enable <= '0';               -- Enable the write operation
-    tagIn <= "00";               -- First tag
-    WAIT FOR 20 ns;              -- Wait for a few clock cycles
-
-    -- Test Case 2: Write with tag different from stored tag (miss)
-    enable <= '1';               -- Enable the write operation
-    tagIn <= "01";               -- Different tag (miss scenario)
+    -- Test Case 1: Reset system
+    rst <= '1';
+    WAIT FOR 20 ns;
+    rst <= '0';
     WAIT FOR 20 ns;
 
-    -- Test Case 3: Write with same tag (hit)
-    enable <= '1';               -- Enable the write operation
-    tagIn <= "00";               -- Same tag as first write (hit scenario)
-    WAIT FOR 20 ns;
+    -- Test Case 2: Write with an initial tag (hit expected)
+    enable <= '1';
+    RDWR <= '0'; -- Write mode
+    tagIn <= "11";
+    WAIT FOR clk_period;
+    WAIT FOR clk_period;
+    WAIT FOR clk_period;
+    WAIT FOR clk_period;
 
-    -- Test Case 4: Enable disabled, no write, expect no update
-    enable <= '0';               -- Disable the write operation
-    tagIn <= "01";               -- New tag, but should not update
-    WAIT FOR 20 ns;
+    -- Test Case 3: write new tag (miss expected)
+    RDWR <= '0';
+    tagIn <= "01";
+    WAIT FOR clk_period;
+    WAIT FOR clk_period;
 
-    -- Test Case 5: Toggle enable and test hit/miss
-    enable <= '1';               -- Enable the write operation
-    tagIn <= "01";               -- Different tag (miss)
-    WAIT FOR 20 ns;
+    -- Test Case 4: Write initial tag (hit expected)
+    RDWR <= '0'; -- Write mode
+    tagIn <= "11";
+    WAIT FOR clk_period;
+    WAIT FOR clk_period;
     
+    -- Test Case 4: read initial tag (hit expected)
+    RDWR <= '1'; 
+    tagIn <= "11";
+    WAIT FOR clk_period;
+    WAIT FOR clk_period;
+    
+    -- Test Case 4: read incorrect tag (miss expected)
+    RDWR <= '1'; 
+    tagIn <= "01";
+    WAIT FOR clk_period;
+    WAIT FOR clk_period;
+
+    -- Test Case 5: Disable enable and test no update
+    enable <= '0';
+    RDWR <= '1'; 
+    tagIn <= "10";
+    WAIT FOR clk_period;
+    ASSERT FALSE REPORT "Simulation completed successfully." SEVERITY FAILURE;
+
     -- Finish Simulation
-    WAIT;
   END PROCESS;
 
 END behavior;

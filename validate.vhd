@@ -68,8 +68,24 @@ ARCHITECTURE structural OF validate IS
     port (d   : in  std_logic;
          clk : in  std_logic;
          rst : in  std_logic;
-         q   : out std_logic;
-         qbar: out std_logic); 
+         q   : out std_logic
+    ); 
+    end component;
+
+  -- components 
+  component PLSlatch
+  port
+  ( d   : in  std_logic;
+    clk : in  std_logic;
+    q   : out std_logic
+  );
+  end component;
+
+    component plsWr 
+        Port ( d : in STD_LOGIC;
+               q : out STD_LOGIC;
+               clk : in STD_LOGIC;
+               rst : in STD_LOGIC);
     end component;
 
 
@@ -83,19 +99,34 @@ ARCHITECTURE structural OF validate IS
     
     signal vam : std_logic := '0';
     signal notWR : std_logic;
-    signal firstWrite : std_logic;
+    signal activeWrite : std_logic;
+    signal firstWrite : std_logic := '0';
     signal validInv : std_logic;
+    signal enAndRst : std_logic;
+    signal rstInv : std_logic;
+    signal rstAndClk : std_logic;
+    signal rcfwOr : std_logic;
 
 BEGIN
 
-    --update tage on first write
-    tag0ltch : dffwr port map (tagIn(0), validInv, rst, tagMem(0), open);
-    tag1ltch : dffwr port map (tagIn(1), validInv, rst, tagMem(1), open);
+    --update tag on first write based on valid mem being high
+    tag0ltch : plswr port map (tagIn(0), tagMem(0), validInv, rst);
+    tag1ltch : plswr port map (tagIn(1), tagMem(1), validInv, rst);
 
     --change valid to high on first write
-    invWr: inverter port map(RDWR, notWR);
-    validAnd : and3 port map (clk, enable, notWR, firstWrite); -- checks if writing
-    validltch : dffwr port map ('1', firstWrite, rst, validMem, open);
+    invWr: inverter port map(RDWR, notWR); --checks if writing
+    invRst: inverter port map(rst, rstInv); --checks if writing
+    enand2rst : and2 port map(rstInv, enable, enAndRst);
+    activeWrtCheck : and3 port map (clk, enAndRst, notWR, activeWrite); -- checks if writing
+    -- check if valid 0(never written to before) and writing
+    -- used to enable dff for valid mem
+    firstWr : and2 port map (validInv, activeWrite, firstWrite); 
+    
+    rstClk : and2 port map (rst, clk, rstAndClk);
+    rcFw : or2 port map (rstAndClk, firstWrite, rcfwOr);
+    
+    validltch : plswr port map ('1', validMem, rcfwOr, rst);
+--    validltch : dffwr port map ('1', rcfwOr, rst, validMem);
     invMem: inverter port map(validMem, validInv);
 
     -- Check for if it matches and valid aka non first write
@@ -109,6 +140,6 @@ BEGIN
     firstOrMatch : or2 PORT MAP(vam, validInv, htMsInt); -- first time or repeated
     
     
-    htMsLatch : dffwr port map(htMsInt, clk, rst, htMs, open);
+    htMsLatch : dffwr port map(htMsInt, clk, rst, htMs);
     
 END structural;
