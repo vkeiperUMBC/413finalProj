@@ -93,7 +93,7 @@ BEGIN
     RDWR <= '1';  -- Read operation
     WAIT FOR 20 ns;
     
-    groupSelect <= "0001";  -- Select group 1
+    groupSelect <= "0001";  -- write miss
     tag <= "10";
     wd <= "11001100";  -- Data to write
     RDWR <= '0';  -- write operation

@@ -10,6 +10,7 @@ ENTITY validate IS
         enable : in std_logic;
         RDWR : in std_logic;
         tagIn : IN STD_LOGIC_VECTOR(1 DOWNTO 0);  -- Requested tag
+		rst : in std_logic;
         htMs : OUT STD_LOGIC                       -- Hit/Miss output: '1' for hit, '0' for miss
     );
 END validate;
@@ -63,6 +64,15 @@ ARCHITECTURE structural OF validate IS
          qbar: out std_logic); 
     end component;
 
+  COMPONENT dffwr
+    port (d   : in  std_logic;
+         clk : in  std_logic;
+         rst : in  std_logic;
+         q   : out std_logic;
+         qbar: out std_logic); 
+    end component;
+
+
     -- Internal signals to store validMem and tagMem
     SIGNAL validMem : STD_LOGIC := '0';  -- Internal signal for valid bit
     SIGNAL tagMem : STD_LOGIC_VECTOR(1 DOWNTO 0) := "00";  -- Internal signal for tag
@@ -79,13 +89,13 @@ ARCHITECTURE structural OF validate IS
 BEGIN
 
     --update tage on first write
-    tag0ltch : dff port map (tagIn(0), validInv, tagMem(0), open);
-    tag1ltch : dff port map (tagIn(1), validInv, tagMem(1), open);
+    tag0ltch : dffwr port map (tagIn(0), validInv, rst, tagMem(0), open);
+    tag1ltch : dffwr port map (tagIn(1), validInv, rst, tagMem(1), open);
 
     --change valid to high on first write
     invWr: inverter port map(RDWR, notWR);
     validAnd : and3 port map (clk, enable, notWR, firstWrite); -- checks if writing
-    validltch : dff port map ('1', firstWrite, validMem, open);
+    validltch : dffwr port map ('1', firstWrite, rst, validMem, open);
     invMem: inverter port map(validMem, validInv);
 
     -- Check for if it matches and valid aka non first write
@@ -96,9 +106,9 @@ BEGIN
     
 
 
-    firstOrMatch : or2 PORT MAP(vam, validInv, htMs); -- first time or repeated
+    firstOrMatch : or2 PORT MAP(vam, validInv, htMsInt); -- first time or repeated
     
     
---    htMsLatch : dff port map(htMsInt, clk, htMs, open);
+    htMsLatch : dffwr port map(htMsInt, clk, rst, htMs, open);
     
 END structural;
