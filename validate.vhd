@@ -84,7 +84,7 @@ BEGIN
 
     --change valid to high on first write
     invWr: inverter port map(RDWR, notWR);
-    validAnd : and3 port map (clk, enable, notWR, firstWrite);
+    validAnd : and3 port map (clk, enable, notWR, firstWrite); -- checks if writing
     validltch : dff port map ('1', firstWrite, validMem, open);
     invMem: inverter port map(validMem, validInv);
 
@@ -93,10 +93,12 @@ BEGIN
     tag1match : xnor2 PORT MAP(tagIn(1), tagMem(1), tagTemp(1));  -- Returns high if matching
     tagFullMatch : and2 PORT MAP(tagTemp(0), tagTemp(1), match);  -- Returns high if tag matches
     validAndMatch : and2 port map(match, validMem, vam);
-
-
-    firstOrMatch : or2 PORT MAP(vam, firstWrite, htMsInt); -- first time or repeated
     
-    htMsLatch : dff port map(htMsInt, clk, htMs, open);
+
+
+    firstOrMatch : or2 PORT MAP(vam, validInv, htMs); -- first time or repeated
+    
+    
+--    htMsLatch : dff port map(htMsInt, clk, htMs, open);
     
 END structural;

@@ -86,8 +86,10 @@ BEGIN
   group2 : cacheGroup PORT MAP(group2Sel, RDWR, wd, rd);
   group3 : cacheGroup PORT MAP(group3Sel, RDWR, wd, rd);
   
+  htMs <= htMsInt;
+  
 
   -- Update the hit/miss result (htMs) on each clock cycle
-  htMsUpdt : dff PORT MAP (htMsInt, clk, htMs, open);
+--  htMsUpdt : dff PORT MAP (htMsInt, clk, htMs, open);
 
 END structural;

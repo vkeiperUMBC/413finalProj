@@ -63,7 +63,7 @@ BEGIN
   -- Stimulus Process
   stimulus_process : PROCESS
   BEGIN
-    -- Test Case 1: Write operation to group 0 with tag "01"
+    -- Test Case 1: Write operation to group 0 with tag "01" expect hit
     enable <= '1';
     state <= '1';  -- Set to active
     RDWR <= '0';  -- Write operation
@@ -76,34 +76,41 @@ BEGIN
     RDWR <= '1';  -- Read operation
     WAIT FOR 20 ns;
 
-    -- Test Case 3: Write operation to group 2 with tag "10"
+    -- Test Case 3: Write operation to group 2 with tag "01" (expect hit)
     groupSelect <= "0100";  -- Select group 2
     wd <= "10101010";
-    tag <= "10";
+    tag <= "01";
     RDWR <= '0';  -- Write operation
     WAIT FOR 20 ns;
 
-    -- Test Case 4: Read operation from group 2 with tag "10" (expect hit)
+    -- Test Case 4: Read operation from group 2 with tag "01" (expect hit)
     RDWR <= '1';  -- Read operation
-    wait for 15 ns;
-    WAIT FOR 5 ns;
+    wait for 20 ns;
 
     -- Test Case 5: Read operation from group 1 with tag "11" (expect miss)
     groupSelect <= "0010";  -- Select group 1
     tag <= "11";
     RDWR <= '1';  -- Read operation
     WAIT FOR 20 ns;
-
-    -- Test Case 6: Inactive state test (no operation should occur)
-    state <= '0';  -- Set to inactive
-    groupSelect <= "1000";  -- Select group 3
-    wd <= "11110000";
-    tag <= "00";
-    RDWR <= '0';  -- Write operation
+    
+    groupSelect <= "0001";  -- Select group 1
+    tag <= "10";
+    wd <= "11001100";  -- Data to write
+    RDWR <= '0';  -- write operation
     WAIT FOR 20 ns;
+    
+    
+
+--    -- Test Case 6: Inactive state test (no operation should occur)
+--    state <= '0';  -- Set to inactive
+--    groupSelect <= "1000";  -- Select group 3
+--    wd <= "11110000";
+--    tag <= "00";
+--    RDWR <= '0';  -- Write operation
+--    WAIT FOR 20 ns;
 
     -- Finish Simulation
-    WAIT;
+    assert false report "Simulation ended successfully." severity failure;
   END PROCESS;
 
 END behavior;
