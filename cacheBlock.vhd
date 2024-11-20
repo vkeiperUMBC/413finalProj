@@ -52,11 +52,17 @@ ARCHITECTURE structural OF cacheBlock IS
     ); 
   END COMPONENT;
 
+  COMPONENT dff 
+    port (d   : in  std_logic;
+         clk : in  std_logic;
+         q   : out std_logic;
+         qbar: out std_logic); 
+    end component;
+
+
   -- Internal signals to connect the validate component
   SIGNAL group0Sel, group1Sel, group2Sel, group3Sel : STD_LOGIC;
   SIGNAL tagSig : STD_LOGIC_VECTOR(1 DOWNTO 0) := "00"; -- Internal signal to pass the tag to validate
-  SIGNAL valid : STD_LOGIC := '0'; -- Valid signal from the cache (internal)
-  SIGNAL validOut : STD_LOGIC; -- Valid output from validate component
   SIGNAL tagOut : STD_LOGIC_VECTOR(1 DOWNTO 0); -- Tag output from validate component
   SIGNAL htMsInt : STD_LOGIC; -- Internal signal to hold the htMs value
   SIGNAL cont : std_logic;
@@ -67,11 +73,12 @@ BEGIN
   validateTag : validate PORT MAP(clk, enable, RDWR, tag, htMsInt);
   
   continue : and2 PORT MAP(htMsInt, state, cont);
+  
   -- Connect the state of the cache groups to the select lines
-  group0and : and2 PORT MAP(cont, groupSelect(0), group0Sel);
-  group1and : and2 PORT MAP(cont, groupSelect(1), group1Sel);
-  group2and : and2 PORT MAP(cont, groupSelect(2), group2Sel);
-  group3and : and2 PORT MAP(cont, groupSelect(3), group3Sel);
+  group0and : and2 PORT MAP(htMsInt, groupSelect(0), group0Sel);
+  group1and : and2 PORT MAP(htMsInt, groupSelect(1), group1Sel);
+  group2and : and2 PORT MAP(htMsInt, groupSelect(2), group2Sel);
+  group3and : and2 PORT MAP(htMsInt, groupSelect(3), group3Sel);
 
   -- Connect cache groups to appropriate cacheGroup instances
   group0 : cacheGroup PORT MAP(group0Sel, RDWR, wd, rd);
@@ -79,17 +86,8 @@ BEGIN
   group2 : cacheGroup PORT MAP(group2Sel, RDWR, wd, rd);
   group3 : cacheGroup PORT MAP(group3Sel, RDWR, wd, rd);
   
-  tagSig <= tagOut;
-  --valid <= validOut;
-
---  -- Update the tag in the cache if needed
---  tagUpdt1 : PLSlatch PORT MAP (tagOut(0), clk, tagSig(0));
---  tagUpdt0 : PLSlatch PORT MAP (tagOut(1), clk, tagSig(1));
-
-  -- Update the valid bit in the cache
-  validUpdt1 : PLSlatch PORT MAP (validOut, clk, valid);
 
   -- Update the hit/miss result (htMs) on each clock cycle
-  htMsUpdt : PLSlatch PORT MAP (htMsInt, clk, htMs);
+  htMsUpdt : dff PORT MAP (htMsInt, clk, htMs, open);
 
 END structural;

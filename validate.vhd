@@ -55,14 +55,6 @@ ARCHITECTURE structural OF validate IS
             output : OUT STD_LOGIC
         );
     END COMPONENT;
-
-  COMPONENT PLSlatch IS
-    PORT (
-      d   : IN  STD_LOGIC;
-      clk : IN  STD_LOGIC;
-      q   : OUT STD_LOGIC
-    ); 
-  END COMPONENT;
   
   COMPONENT dff 
     port (d   : in  std_logic;
@@ -75,18 +67,11 @@ ARCHITECTURE structural OF validate IS
     SIGNAL validMem : STD_LOGIC := '0';  -- Internal signal for valid bit
     SIGNAL tagMem : STD_LOGIC_VECTOR(1 DOWNTO 0) := "00";  -- Internal signal for tag
 
-    SIGNAL validInvSig : STD_LOGIC;
-    SIGNAL wireFirst : STD_LOGIC := '0';
-    SIGNAL vofSig : STD_LOGIC := '0';
     SIGNAL tagTemp : STD_LOGIC_VECTOR(1 DOWNTO 0) := "00";
     SIGNAL match : STD_LOGIC := '0';
     SIGNAL htMsInt : STD_LOGIC := '0';
     
-    signal ecn : std_logic := '0';
-    signal ecn2 : std_logic := '0';
-    signal ntClk : std_logic := '0';
     signal vam : std_logic := '0';
-    signal clkAndEn : std_logic := '0';
     signal notWR : std_logic;
     signal firstWrite : std_logic;
     signal validInv : std_logic;
@@ -100,7 +85,7 @@ BEGIN
     --change valid to high on first write
     invWr: inverter port map(RDWR, notWR);
     validAnd : and3 port map (clk, enable, notWR, firstWrite);
-    validltch : PLSLatch port map ('1', firstWrite, validMem);
+    validltch : dff port map ('1', firstWrite, validMem, open);
     invMem: inverter port map(validMem, validInv);
 
     -- Check for if it matches and valid aka non first write
@@ -112,6 +97,6 @@ BEGIN
 
     firstOrMatch : or2 PORT MAP(vam, firstWrite, htMsInt); -- first time or repeated
     
-    htMsLatch : PLSlatch port map(htMsInt, clk, htMs);
+    htMsLatch : dff port map(htMsInt, clk, htMs, open);
     
 END structural;
