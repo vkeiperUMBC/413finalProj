@@ -35,14 +35,6 @@ ARCHITECTURE structural OF cacheBlock IS
     );
   END COMPONENT;
 
-  COMPONENT or2
-    PORT (
-      a : IN STD_LOGIC;
-      b : IN STD_LOGIC;
-      y : OUT STD_LOGIC
-    );
-  END COMPONENT;
-
   COMPONENT validate IS
     PORT (
         clk: in std_logic;
@@ -52,22 +44,6 @@ ARCHITECTURE structural OF cacheBlock IS
         rst : in std_logic;
         htMs : OUT STD_LOGIC -- Hit/Miss output: '1' for hit, '0' for miss
     );
-  END COMPONENT;
-
-  COMPONENT PLSlatch IS
-    PORT (
-      d   : IN  STD_LOGIC;
-      clk : IN  STD_LOGIC;
-      q   : OUT STD_LOGIC
-    ); 
-  END COMPONENT;
-
-  COMPONENT plswr IS
-    PORT (d : in STD_LOGIC;
-           q : out STD_LOGIC;
-           clk : in STD_LOGIC;
-           rst : in STD_LOGIC
-           ); 
   END COMPONENT;
 
 
@@ -91,9 +67,7 @@ ARCHITECTURE structural OF cacheBlock IS
   SIGNAL group0Sel, group1Sel, group2Sel, group3Sel : STD_LOGIC;
   SIGNAL htMsInt : STD_LOGIC; -- Internal signal to hold the htMs value
   SIGNAL clkInv : STD_LOGIC; -- Internal signal to hold the htMs value
-  signal test : std_logic;
-  signal test2 : std_logic;
-  signal test3 : std_logic;
+  signal temp : std_logic;
 
 BEGIN
 
@@ -112,15 +86,10 @@ BEGIN
   group2 : cacheGroup PORT MAP(group2Sel, RDWR, wd, rd);
   group3 : cacheGroup PORT MAP(group3Sel, RDWR, wd, rd);
   
---  clkInverter: inverter port map(clk, clkInv);
   clkInverter: inverter port map(clk, clkInv);
---  htMsOut : plswr port map (htmsint, htms, clkInv, rst);
   
---  htMs <= htMsInt;
-  
-  
-  htmMstestst : dffwr port map (htMsInt, clk, rst, test2);
-  htMsEnable : and2 port map (test2, blockEnable, htMs);
+  htmMstestst : dffwr port map (htMsInt, clk, rst, temp);
+  htMsEnable : and2 port map (temp, blockEnable, htMs);
   
   
   

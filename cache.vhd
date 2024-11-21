@@ -39,32 +39,6 @@ ARCHITECTURE structural OF cache IS
       );
   END COMPONENT;
 
-  COMPONENT and3
-    PORT (
-      a : IN STD_LOGIC;
-      b : IN STD_LOGIC;
-      c : IN STD_LOGIC;
-      y : OUT STD_LOGIC
-    );
-  END COMPONENT;
-
-  COMPONENT inverter
-    PORT (
-      input : IN STD_LOGIC;
-      output : OUT STD_LOGIC
-    );
-  END COMPONENT;
-
-
-
-  COMPONENT dffwr
-    port (d   : in  std_logic;
-         clk : in  std_logic;
-         rst : in  std_logic;
-         q   : out std_logic); 
-    end component;
-
-
 
   COMPONENT and2
     PORT (
@@ -73,6 +47,7 @@ ARCHITECTURE structural OF cache IS
       y : OUT STD_LOGIC
     );
   END COMPONENT;
+
 
   COMPONENT or2
     PORT (
@@ -110,7 +85,6 @@ signal block2RdData : std_logic_vector (7 downto 0);
 signal block3RdData : std_logic_vector (7 downto 0);
 signal blocksRdData : std_logic_vector (7 downto 0);
 signal htMsInt : std_logic;
-signal clkInv : std_logic;
 signal blockClkInt : std_logic_vector (3 downto 0);
 
 signal htMs0 : std_logic;

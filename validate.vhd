@@ -56,13 +56,6 @@ ARCHITECTURE structural OF validate IS
             output : OUT STD_LOGIC
         );
     END COMPONENT;
-  
-  COMPONENT dff 
-    port (d   : in  std_logic;
-         clk : in  std_logic;
-         q   : out std_logic;
-         qbar: out std_logic); 
-    end component;
 
   COMPONENT dffwr
     port (d   : in  std_logic;
@@ -72,14 +65,6 @@ ARCHITECTURE structural OF validate IS
     ); 
     end component;
 
-  -- components 
-  component PLSlatch
-  port
-  ( d   : in  std_logic;
-    clk : in  std_logic;
-    q   : out std_logic
-  );
-  end component;
 
     component plsWr 
         Port ( d : in STD_LOGIC;
