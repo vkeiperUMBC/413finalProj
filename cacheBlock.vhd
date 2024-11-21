@@ -50,7 +50,7 @@ ARCHITECTURE structural OF cacheBlock IS
         RDWR : in std_logic;
         tagIn : IN STD_LOGIC_VECTOR(1 DOWNTO 0); -- Requested tag
         rst : in std_logic;
-        htMs : OUT STD_LOGIC -- Hit/Miss output: '0' for hit, '1' for miss
+        htMs : OUT STD_LOGIC -- Hit/Miss output: '1' for hit, '0' for miss
     );
   END COMPONENT;
 
@@ -61,6 +61,15 @@ ARCHITECTURE structural OF cacheBlock IS
       q   : OUT STD_LOGIC
     ); 
   END COMPONENT;
+
+  COMPONENT plswr IS
+    PORT (d : in STD_LOGIC;
+           q : out STD_LOGIC;
+           clk : in STD_LOGIC;
+           rst : in STD_LOGIC
+           ); 
+  END COMPONENT;
+
 
   COMPONENT dffwr
     port (d   : in  std_logic;
@@ -82,6 +91,9 @@ ARCHITECTURE structural OF cacheBlock IS
   SIGNAL group0Sel, group1Sel, group2Sel, group3Sel : STD_LOGIC;
   SIGNAL htMsInt : STD_LOGIC; -- Internal signal to hold the htMs value
   SIGNAL clkInv : STD_LOGIC; -- Internal signal to hold the htMs value
+  signal test : std_logic;
+  signal test2 : std_logic;
+  signal test3 : std_logic;
 
 BEGIN
 
@@ -101,10 +113,17 @@ BEGIN
   group3 : cacheGroup PORT MAP(group3Sel, RDWR, wd, rd);
   
 --  clkInverter: inverter port map(clk, clkInv);
+  clkInverter: inverter port map(clk, clkInv);
+--  htMsOut : plswr port map (htmsint, htms, clkInv, rst);
   
-  htMs <= htMsInt;
+--  htMs <= htMsInt;
   
---  htMsOut : dffwr port map (htmsint, clkInv, rst, htms);
+  
+  htmMstestst : dffwr port map (htMsInt, clk, rst, test2);
+  htMsEnable : and2 port map (test2, blockEnable, htMs);
+  
+  
+  
    
   
 

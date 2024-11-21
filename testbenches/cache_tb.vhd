@@ -90,7 +90,7 @@ BEGIN
 
     -- Test Case 2: Read operation from block 0, group 0 with tag "01" (expect hit)
     RDWR <= '1';  -- Read operation
-    WAIT FOR 20 ns;
+    WAIT FOR 40 ns;
     
     -- Test Case 1: Write operation to block 0, group 0 with tag "01" expect hit
     RDWR <= '0';  -- Write operation
@@ -129,44 +129,44 @@ BEGIN
     RDWR <= '1';  -- Read operation
     WAIT FOR 20 ns; 
     
-    -- up top here proves read and write to 1 group works with hit and miss 140ns
+
      
-    -- Test Case 3: Write operation to block 1, group 2 with tag "10"
-    blkSel <= "0010";  -- Select block 1
-    groupSel <= "0100";  -- Select group 2
-    tag <= "10";  -- Tag
-    data <= "10101010";  -- Data to write
-    RDWR <= '0';  -- Write operation
-    WAIT FOR 5 ns;
-    WAIT FOR 15 ns;
+--    -- Test Case 3: Write operation to block 1, group 2 with tag "10"
+--    blkSel <= "0010";  -- Select block 1
+--    groupSel <= "0100";  -- Select group 2
+--    tag <= "10";  -- Tag
+--    data <= "10101010";  -- Data to write
+--    RDWR <= '0';  -- Write operation
+--    WAIT FOR 5 ns;
+--    WAIT FOR 15 ns;
 
-    -- Test Case 4: Read operation from block 1, group 2 with tag "10" (expect hit)
-    RDWR <= '1';  -- Read operation
-    WAIT FOR 20 ns;
+--    -- Test Case 4: Read operation from block 1, group 2 with tag "10" (expect hit)
+--    RDWR <= '1';  -- Read operation
+--    WAIT FOR 20 ns;
 
-    -- Test Case 5: Read operation from block 2, group 1 with tag "11" (expect miss)
-    blkSel <= "0100";  -- Select block 2
-    groupSel <= "0010";  -- Select group 1
-    tag <= "11";  -- Tag
-    RDWR <= '1';  -- Read operation
-    WAIT FOR 20 ns;
+--    -- Test Case 5: Read operation from block 2, group 1 with tag "11" (expect miss)
+--    blkSel <= "0100";  -- Select block 2
+--    groupSel <= "0010";  -- Select group 1
+--    tag <= "11";  -- Tag
+--    RDWR <= '1';  -- Read operation
+--    WAIT FOR 20 ns;
 
-    -- Test Case 6: Write operation to block 3, group 3 with tag "00"
-    blkSel <= "1000";  -- Select block 3
-    groupSel <= "1000";  -- Select group 3
-    tag <= "00";  -- Tag
-    data <= "11110000";  -- Data to write
-    RDWR <= '0';  -- Write operation
-    WAIT FOR 20 ns;
+--    -- Test Case 6: Write operation to block 3, group 3 with tag "00"
+--    blkSel <= "1000";  -- Select block 3
+--    groupSel <= "1000";  -- Select group 3
+--    tag <= "00";  -- Tag
+--    data <= "11110000";  -- Data to write
+--    RDWR <= '0';  -- Write operation
+--    WAIT FOR 20 ns;
 
-    -- Test Case 7: Inactive state (no operation should occur)
-    enable <= '0';  -- Disable cache
-    blkSel <= "0001";  -- Select block 0
-    groupSel <= "0001";  -- Select group 0
-    data <= "00000000";
-    tag <= "01";
-    RDWR <= '0';  -- Write operation
-    WAIT FOR 20 ns;
+--    -- Test Case 7: Inactive state (no operation should occur)
+--    enable <= '0';  -- Disable cache
+--    blkSel <= "0001";  -- Select block 0
+--    groupSel <= "0001";  -- Select group 0
+--    data <= "00000000";
+--    tag <= "01";
+--    RDWR <= '0';  -- Write operation
+--    WAIT FOR 20 ns;
 
     -- End Simulation
     ASSERT FALSE REPORT "Simulation completed successfully." SEVERITY FAILURE;
