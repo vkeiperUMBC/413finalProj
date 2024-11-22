@@ -1,16 +1,19 @@
-LIBRARY IEEE;
-USE IEEE.STD_LOGIC_1164.ALL;
+-- XNOR Gate
 
-ENTITY xnor2 IS
-  PORT (
-    a : IN STD_LOGIC;  -- First input
-    b : IN STD_LOGIC;  -- Second input
-    y : OUT STD_LOGIC  -- Output of the XNOR gate
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity xnor2 is
+port 
+( a : in STD_LOGIC;  
+  b : in STD_LOGIC;  
+  y : out STD_LOGIC  
   );
-END xnor2;
-
-ARCHITECTURE behavior OF xnor2 IS
-BEGIN
-  -- XNOR Logic: Output is '1' when a and b are equal, '0' otherwise
+end xnor2;
+  
+architecture structual of xnor2 is 
+begin
+  
   y <= NOT (a XOR b);
-END behavior;
+  
+end structural;
