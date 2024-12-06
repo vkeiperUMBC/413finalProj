@@ -50,14 +50,6 @@ architecture structural of TimingBlock is
   );   
   end component;
   
-  component xor2 
-  port 
-  ( a : in STD_LOGIC;  
-    b : in STD_LOGIC;  
-    y : out STD_LOGIC  
-  );
-  end component;
-  
   component xnor2 
   port 
   ( a : in STD_LOGIC;  
@@ -117,9 +109,6 @@ architecture structural of TimingBlock is
   for or2_15 : or2 use entity work.or2(structural);
   for or2_16 : or2 use entity work.or2(structural);
   for or2_17 : or2 use entity work.or2(structural);
-  --for and2_RM : and2 use entity work.and2(structural);
-  --for and2_RDWR : and2 use entity work.and2(structural);
-  --for xnor2_RW : xnor2 use entity work.xor2(structural);
   for or3_1 : or3 use entity work.or3(structural);
   
   -- signals
@@ -173,9 +162,7 @@ begin
   or2_15 : or2 port map (o14, q17, o15);
   or2_16 : or2 port map (o15, q18, o16);
   or2_17 : or2 port map (o16, o8, o17);
-  --and2_RM : and2 port map (RMenable, o17, RMbusy);
   and2_RDWR : and2 port map (RDWRsw, RDWR, RDWR_OUT);
-  --xnor2_RW : xnor2 port map (o16, RDWR, RDWR_OUT);
   or3_1 : or3 port map (q1, o1, o17, BUSY);
   
 end structural;
