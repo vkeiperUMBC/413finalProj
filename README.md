@@ -12,8 +12,6 @@ file path: /afs/umbc.edu/users/v/k/vkeiper1/home/vk413/finalproj
 -decoder 2 to 4
 -decoder 6 to 12
 -mux
--or2
--or2x8
 -or4x8
 -plswr
 -selector
