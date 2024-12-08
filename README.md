@@ -18,8 +18,6 @@ file path: /afs/umbc.edu/users/v/k/vkeiper1/home/vk413/finalproj
 -plswr
 -selector
 -tx
--xnor 2
-
 -- wait till posted
 -dff
 -dffwr
