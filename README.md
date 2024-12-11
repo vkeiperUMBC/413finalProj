@@ -10,9 +10,6 @@ file path: /afs/umbc.edu/users/v/k/vkeiper1/home/vk413/finalproj
 -pls latch(in progress)\
 -plswr \
 \
--- wait till posted\
--dff\
--dffwr\
 
 ## high lvel to do
 cache block\
