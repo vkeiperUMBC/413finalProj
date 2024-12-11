@@ -15,6 +15,5 @@ file path: /afs/umbc.edu/users/v/k/vkeiper1/home/vk413/finalproj
 cache block\
 cache group \
 cache\
-modcount\
 state machine\
 timing block\
