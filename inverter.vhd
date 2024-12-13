@@ -5,8 +5,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity inverter is
   port 
-  ( input  : in std_logic;
-    output : out std_logic
+  ( a  : in std_logic;
+    y : out std_logic
   );
 end inverter;
 
@@ -14,6 +14,6 @@ architecture structural of inverter is
 
 begin
 
-  output <= NOT input;
+  a <= NOT y;
 
 end structural;
